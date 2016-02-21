@@ -79,7 +79,7 @@ private DatagramSocket clientSocket;
                     stop.setEnabled(false);
                 }
             });
-            JLabel infoText = new JLabel("<html><div style=\"text-align: center;\">Just hit record and watch your voice be translated into text.\n<br>Only English is supported by this demo, but the full API supports dozens of languages.<center></html>",
+            JLabel infoText = new JLabel("<html><div style=\"text-align: center;\">Just hit record, say the command, and the command will send to remote device ( at the end of the command you must say the word 'on' or 'off', to enable or disable the outputs that are bind to specific command ).<center></html>",
                     0);
 
             JButton backButton = new JButton("Back");

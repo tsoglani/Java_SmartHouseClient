@@ -33,8 +33,11 @@ public class MenuFrame extends JFrame {
 
                     @Override
                     public void run() {
-                        disableButtonForNSec(6, voiceCommandButton);
+                        disableButtonForNSec(5, voiceCommandButton);
+                        disableButtonForNSec(5, switchCommandButton);
+
                         new AutoConnection(voiceButtonText, MenuFrame.this);
+
                     }
                 }.start();
             }
@@ -47,7 +50,9 @@ public class MenuFrame extends JFrame {
 
                     @Override
                     public void run() {
-                        disableButtonForNSec(6, switchCommandButton);
+                        disableButtonForNSec(5, switchCommandButton);
+                        disableButtonForNSec(5, voiceCommandButton);
+
                         new AutoConnection(switchButtonText, MenuFrame.this);
                     }
                 }.start();
