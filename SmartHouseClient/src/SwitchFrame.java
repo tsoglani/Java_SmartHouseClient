@@ -1,7 +1,9 @@
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -10,12 +12,14 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputListener;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -78,7 +82,7 @@ public class SwitchFrame extends JFrame {
                 menuFrame.setVisible(true);
             }
         });
-        
+
         refresh.addActionListener(new ActionListener() {
 
             @Override
@@ -118,7 +122,6 @@ public class SwitchFrame extends JFrame {
                 sendData("getAllOutput", inetAddress, AutoConnection.port);
             } else if (usingMode.equals(commandsMode)) {
                 sendData("getAllCommandsOutput", inetAddress, AutoConnection.port);
-
             }
         }
     }
@@ -136,7 +139,7 @@ public class SwitchFrame extends JFrame {
                     }
                     clientSocket.receive(receivePacket);
                     String sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
-
+                    System.out.println(sentence);
                     processString(sentence);
                 } catch (SocketException e) {
 
@@ -149,49 +152,103 @@ public class SwitchFrame extends JFrame {
     }
 
     private void processString(String input) {
-        String[] pinax = input.split("@@@");
-        centerPanel.removeAll();
-        for (int i = 0; i < pinax.length; i++) {
+        if (input.contains("@@@")) {
 
-            JPanel panelPiece = new JPanel();
-            final JSwitchButton switchButton = new JSwitchButton("on", "off");
-            String fullMsg = pinax[i];
-            System.out.println(fullMsg);
-            String text = null;
-            String mode = null;
-            if (fullMsg == null) {
-                continue;
-            }
-            if (fullMsg.startsWith("respondGetAllCommandsOutput")) {
-                fullMsg = fullMsg.substring("respondGetAllCommandsOutput".length(), fullMsg.length());
-            } else if (fullMsg.startsWith("respondGetAllOutput")) {
-                fullMsg = fullMsg.substring("respondGetAllOutput".length(), fullMsg.length());
-            }
-            if (fullMsg.endsWith("on")) {
-                text = fullMsg.substring(0, fullMsg.length() - " on".length());
-                mode = "on";
-                switchButton.setSelected(true);
-            } else if (fullMsg.endsWith("off")) {
-                text = fullMsg.substring(0, fullMsg.length() - " off".length());
-                mode = "off";
-                switchButton.setSelected(false);
+            String[] pinax = input.split("@@@");
+            centerPanel.removeAll();
+            for (int i = 0; i < pinax.length; i++) {
 
-            } else {
-                return;
-            }
-
-            final String text2 = text;
-            switchButton.addChangeListener(new ChangeListener() {
-
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    for (InetAddress inetAddress : AutoConnection.usingInetAddress) {
-
-                        sendData(text2 + switchButton.getText(), inetAddress, AutoConnection.port);
-
-                    }
+                JPanel panelPiece = new JPanel();
+                final JSwitchButton switchButton = new JSwitchButton("on", "off");
+                String fullMsg = pinax[i];
+                System.out.println(fullMsg);
+                String text = null;
+                String mode = null;
+                if (fullMsg == null) {
+                    continue;
                 }
-            });
+
+                if (fullMsg.startsWith("respondGetAllCommandsOutput")) {
+                    fullMsg = fullMsg.substring("respondGetAllCommandsOutput".length(), fullMsg.length());
+                } else if (fullMsg.startsWith("respondGetAllOutput")) {
+                    fullMsg = fullMsg.substring("respondGetAllOutput".length(), fullMsg.length());
+                }
+                if (fullMsg.endsWith("on")) {
+                    text = fullMsg.substring(0, fullMsg.length() - " on".length());
+                    mode = "on";
+                    switchButton.setSelected(true);
+                } else if (fullMsg.endsWith("off")) {
+                    text = fullMsg.substring(0, fullMsg.length() - " off".length());
+                    mode = "off";
+                    switchButton.setSelected(false);
+
+                } else {
+                    return;
+                }
+
+                final String text2 = text;
+
+                switchButton.addMouseListener(new MouseInputListener() {
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        for (InetAddress inetAddress : AutoConnection.usingInetAddress) {
+                            String power = null;
+                            if (switchButton.getText().equals("on")) {
+                                power = "off";
+                            } else if (switchButton.getText().equals("off")) {
+                                power = "on";
+                            }
+
+                            if (power != null) {
+                                sendData("switch " + text2 + " " + power, inetAddress, AutoConnection.port);
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseDragged(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                    }
+                });
+//            switchButton.addChangeListener(new ChangeListener() {
+
+//                @Override
+//                public void stateChanged(ChangeEvent e) {
+//                    for (InetAddress inetAddress : AutoConnection.usingInetAddress) {
+//                        String power=null;
+//                        if (switchButton.getText().equals("on")) {
+//                            power="off";
+//                        } else if (switchButton.getText().equals("off")) {
+//                             power="on";
+//                        }
+//                        
+//                        if(power!=null)
+//                        sendData(text2 + " "+power, inetAddress, AutoConnection.port);
+//                        
+//                    }
+//                }
+//            });
 //            switchButton.addActionListener(new ActionListener() {
 //
 //                @Override
@@ -205,12 +262,50 @@ public class SwitchFrame extends JFrame {
 //                }
 //
 //            });
+                panelPiece.add(new JLabel(text));
+                panelPiece.add(switchButton);
+                centerPanel.add(panelPiece);
+            }
+            repaint();
+            revalidate();
+        } else {
 
-            panelPiece.add(new JLabel(text));
-            panelPiece.add(switchButton);
-            centerPanel.add(panelPiece);
+            for (int i = 0; i < centerPanel.getComponentCount(); i++) {
+                Component component = centerPanel.getComponent(i);
+                if (component instanceof JPanel) {
+                    JPanel panel = (JPanel) component;
+                JSwitchButton sb = (JSwitchButton) panel.getComponent(1);
+
+//                    for (int j = 0; j < panel.getComponentCount(); j++) {
+                         JLabel label = (JLabel) panel.getComponent(0);
+
+//                        if (panelPiece instanceof JSwitchButton) {
+//                            System.out.println("eeeeee");
+//
+//                            sb = (JSwitchButton) panelPiece;
+                            if (input.startsWith("switch")) {
+                                input = input.substring("switch ".length(), input.length());
+//                            }
+
+                        }
+//                        if (panelPiece instanceof JLabel) {
+//                            JLabel label = (JLabel) panelPiece;
+                            if (input.startsWith(label.getText())) {
+                                String power = input.substring(label.getText().length(), input.length());
+                                if (power.startsWith(" ")) {
+                                    power = power.substring(" ".length(), power.length());
+                                }
+                                if (power.equals("on")) {
+                                    sb.setSelected(true);
+                                } else if (power.equals("off")) {
+                                    sb.setSelected(false);
+                                }
+                            }
+
+//                        }
+//                    }
+                }
+            }
         }
-        repaint();
-        revalidate();
     }
 }

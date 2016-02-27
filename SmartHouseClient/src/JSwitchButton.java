@@ -49,7 +49,7 @@ import org.w3c.dom.css.Rect;
                 @Override
                 public void mouseReleased( MouseEvent e ) {
                     if(new Rectangle( getPreferredSize().width, getPreferredSize().height ).contains( e.getPoint().x,e.getPoint().y )) {
-                        setSelected( !isSelected() );
+//                        setSelected( !isSelected() );
                     }
                 }
             });
