@@ -52,7 +52,7 @@ public class AutoConnection {
                 for (int i = 1; i < 255; i++) {
                     final String checkIp = ip + i;
                     // Log.e("ip=",checkIp);
-                    String sendData = "returning";
+                    String sendData = (Main.UNIQUE_USER_ID)+"returning";
                     InetAddress IPAddress = InetAddress.getByName(checkIp);
                     DatagramPacket sendPacket = new DatagramPacket(sendData.getBytes(), sendData.length(), IPAddress, port);
                     clientSocket.send(sendPacket);

@@ -160,7 +160,7 @@ private DatagramSocket clientSocket;
             @Override
             public void run() {
                 try {
-                    DatagramPacket sendPacket = new DatagramPacket(sendData.getBytes("UTF-8"), sendData.length(), IPAddress, port);
+                    DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID+sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID+sendData).length(), IPAddress, port);
                     if (clientSocket == null || clientSocket.isClosed())
                         clientSocket = new DatagramSocket();
 
