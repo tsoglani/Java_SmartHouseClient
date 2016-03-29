@@ -39,7 +39,31 @@ public class AutoConnection {
             Logger.getLogger(AutoConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+     public AutoConnection(String ip,String input, MenuFrame menuFrame) {
+        this.input = input;
+        this.menuFrame = menuFrame;
+        try {
+            sendToSpesificIpInNetwork(ip);
+        } catch (Exception ex) {
+            Logger.getLogger(AutoConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
+     private void sendToSpesificIpInNetwork(String ip) throws SocketException, UnknownHostException, IOException{
+        clientSocket = new DatagramSocket();
+        receiver();
+      
+         
+                    // Log.e("ip=",checkIp);
+                    String sendData = (Main.UNIQUE_USER_ID)+"returning";
+                    InetAddress IPAddress = InetAddress.getByName(ip);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData.getBytes(), sendData.length(), IPAddress, port);
+                    clientSocket.send(sendPacket);
+
+           
+        
+     }
     public void sendToAllIpInNetwork() throws UnknownHostException, IOException {
         ArrayList<String> ipList = getLocal();
         clientSocket = new DatagramSocket();
