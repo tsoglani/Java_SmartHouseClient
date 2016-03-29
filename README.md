@@ -1,15 +1,13 @@
-Arduino_SmartHouseServer (NOT TESTED)
+JAVA Smart house client (For Testing)
 
-this is the refactored code for arduino side from Raspberry smart house project (https://github.com/tsoglani/Raspberry_SmartHouseServer)
+This is a testing smart house java client for your computer device, you must have Java jdk. If you don't have it aleady you can download it from http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html.
 
+You must download the Raspberry_SmartHouseServer project at your raspberry device "https://github.com/tsoglani/Raspberry_SmartHouseServer" and follow read the instructions.
 
-In this project, you can send commands from your computer, android, wearable-watch device to your arduino device (if you refactor the SH.java file this would be able to work in any device not only Arduino) you can connect as many Arduino devices as you want but all of them must be conected on same local network ( the device you will use to send the command must also be on same local network ).
+Arduino -> "https://github.com/tsoglani/Arduino_smartHouseServer"
 
-incide the code you might have to midify:
+If you refactor-edit https://github.com/tsoglani/Raspberry_SmartHouseServer/blob/master/SmartHouseRaspberryServer/SH.java file, it will be able to play in any "Server" device, not only raspberry and arduino.
 
--NumberOfBindingCommands : the number of commands you want to bind with one or more outputs. -DeviceID : in case you want to use more than one Arduino (or any) device in the same local network, each Arduino device must have a unique DeviceID. Example: if we have 4 Arduino devices connected in local network(WLAN), each one MUST have a unique ID : the first Ruspberry device DeviceID will be 0, the second device's DeviceID will be 1 the third will be 2 the fourth will be 3 ... (it is important if you want to open each output seperate)
+After you download it and run it on server device, to be able to test it, you MUST be on same local-WLAN network with your raspberry device.
 
-    initializePowerCommans() function (most important): here you call addCommandsAndPorts function, addCommandsAndPorts function, have 3 parameters, -the first parameter is an id (in code is "i" and used in switch cases, so it change auto) you don't have to change it, except if your Relay have more that 8 outputs. -the seccond parameter is an array of string-text, the firts text in this array is sending and used for switching outputs (third parameter) on and off, but you have option to put more in case you want to activate or deactivate the outputs with speech commands (you can do it with speech command also, by saying the command and then "on" or "off" word).
-    the third parameter is an array of integer, each integer represents one output (in Arduino, the width of outputs is from 0 to 20) you can put one or more integers to activate or deactivate one or more output with one (or more) command (parameter 2).
-
-
+How it works, from computer device, you are sending text file to the server by switching command buttons or by Speech (you have to say the correct command with "on" or "off" at the end of the command, for example "room light off", command ="room light", the commands are given on server side (arduino-ruspberry ... etc ) ). If you don't have response from server, that means you are not connected with the server device yet, and the application will be still waiting for a respond from the server to go to the next Frame or change the switch buttons.
