@@ -80,6 +80,14 @@ public class SwitchFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 menuFrame.setVisible(true);
+                if (clientSocket != null) {
+                    try {
+                        clientSocket.disconnect();
+                        clientSocket.close();
+                    } catch (Exception ee) {
+                        ee.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -102,7 +110,7 @@ public class SwitchFrame extends JFrame {
             public void run() {
                 try {
 
-                    DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID+sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID+sendData).length(), IPAddress, port);
+                    DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID + sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID + sendData).length(), IPAddress, port);
                     if (clientSocket == null || clientSocket.isClosed()) {
                         clientSocket = new DatagramSocket();
                     }
@@ -153,7 +161,7 @@ public class SwitchFrame extends JFrame {
     }
 
     private void processString(String input) {
-        System.out.println("input : "+input);
+        System.out.println("input : " + input);
         if (input.contains("@@@")) {
 
             String[] pinax = input.split("@@@");
@@ -276,33 +284,33 @@ public class SwitchFrame extends JFrame {
                 Component component = centerPanel.getComponent(i);
                 if (component instanceof JPanel) {
                     JPanel panel = (JPanel) component;
-                JSwitchButton sb = (JSwitchButton) panel.getComponent(1);
+                    JSwitchButton sb = (JSwitchButton) panel.getComponent(1);
 
 //                    for (int j = 0; j < panel.getComponentCount(); j++) {
-                         JLabel label = (JLabel) panel.getComponent(0);
+                    JLabel label = (JLabel) panel.getComponent(0);
 
 //                        if (panelPiece instanceof JSwitchButton) {
 //                            System.out.println("eeeeee");
 //
 //                            sb = (JSwitchButton) panelPiece;
-                            if (input.startsWith("switch")) {
-                                input = input.substring("switch ".length(), input.length());
+                    if (input.startsWith("switch")) {
+                        input = input.substring("switch ".length(), input.length());
 //                            }
 
-                        }
+                    }
 //                        if (panelPiece instanceof JLabel) {
 //                            JLabel label = (JLabel) panelPiece;
-                            if (input.startsWith(label.getText())) {
-                                String power = input.substring(label.getText().length(), input.length());
-                                if (power.startsWith(" ")) {
-                                    power = power.substring(" ".length(), power.length());
-                                }
-                                if (power.equals("on")) {
-                                    sb.setSelected(true);
-                                } else if (power.equals("off")) {
-                                    sb.setSelected(false);
-                                }
-                            }
+                    if (input.startsWith(label.getText())) {
+                        String power = input.substring(label.getText().length(), input.length());
+                        if (power.startsWith(" ")) {
+                            power = power.substring(" ".length(), power.length());
+                        }
+                        if (power.equals("on")) {
+                            sb.setSelected(true);
+                        } else if (power.equals("off")) {
+                            sb.setSelected(false);
+                        }
+                    }
 
 //                        }
 //                    }

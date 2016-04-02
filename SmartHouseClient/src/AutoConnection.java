@@ -39,8 +39,8 @@ public class AutoConnection {
             Logger.getLogger(AutoConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     public AutoConnection(String ip,String input, MenuFrame menuFrame) {
+
+    public AutoConnection(String ip, String input, MenuFrame menuFrame) {
         this.input = input;
         this.menuFrame = menuFrame;
         try {
@@ -50,23 +50,25 @@ public class AutoConnection {
         }
     }
 
-     private void sendToSpesificIpInNetwork(String ip) throws SocketException, UnknownHostException, IOException{
-        clientSocket = new DatagramSocket();
+    private void sendToSpesificIpInNetwork(String ip) throws SocketException, UnknownHostException, IOException {
+        if (clientSocket == null || !clientSocket.isConnected()) {
+            clientSocket = new DatagramSocket();
+        }
         receiver();
-      
-         
-                    // Log.e("ip=",checkIp);
-                    String sendData = (Main.UNIQUE_USER_ID)+"returning";
-                    InetAddress IPAddress = InetAddress.getByName(ip);
-                    DatagramPacket sendPacket = new DatagramPacket(sendData.getBytes(), sendData.length(), IPAddress, port);
-                    clientSocket.send(sendPacket);
 
-           
-        
-     }
+        // Log.e("ip=",checkIp);
+        String sendData = (Main.UNIQUE_USER_ID) + "returning";
+        InetAddress IPAddress = InetAddress.getByName(ip);
+        DatagramPacket sendPacket = new DatagramPacket(sendData.getBytes(), sendData.length(), IPAddress, port);
+        clientSocket.send(sendPacket);
+
+    }
+
     public void sendToAllIpInNetwork() throws UnknownHostException, IOException {
         ArrayList<String> ipList = getLocal();
-        clientSocket = new DatagramSocket();
+        if (clientSocket == null || !clientSocket.isConnected()) {
+            clientSocket = new DatagramSocket();
+        }
         receiver();
         for (final String ip : ipList) {
             if (ip.replaceAll(" ", "").equals("")) {
@@ -76,7 +78,7 @@ public class AutoConnection {
                 for (int i = 1; i < 255; i++) {
                     final String checkIp = ip + i;
                     // Log.e("ip=",checkIp);
-                    String sendData = (Main.UNIQUE_USER_ID)+"returning";
+                    String sendData = (Main.UNIQUE_USER_ID) + "returning";
                     InetAddress IPAddress = InetAddress.getByName(checkIp);
                     DatagramPacket sendPacket = new DatagramPacket(sendData.getBytes(), sendData.length(), IPAddress, port);
                     clientSocket.send(sendPacket);
@@ -105,9 +107,12 @@ public class AutoConnection {
 
                         VoiceCommandFrame voiceCommandFrame = new VoiceCommandFrame(menuFrame);
                         menuFrame.setVisible(false);
+                        closeClientSoccet();
+
                     } else if (input.equals(MenuFrame.switchButtonText)) {
                         SwitchFrame switchFrame = new SwitchFrame(menuFrame);
-                         menuFrame.setVisible(false);
+                        menuFrame.setVisible(false);
+                        closeClientSoccet();
                     }
 
                 } catch (IOException e) {
@@ -116,6 +121,16 @@ public class AutoConnection {
 
             }
         }.start();
+    }
+
+    private void closeClientSoccet() {
+        try {
+            clientSocket.disconnect();
+            clientSocket.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        clientSocket = null;
     }
 
     private static ArrayList<String> getLocal() throws SocketException {
