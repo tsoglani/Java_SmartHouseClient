@@ -102,7 +102,7 @@ public class SwitchFrame extends JFrame {
             public void run() {
                 try {
 
-                    DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID+sendData).getBytes("UTF-8"), (sendData+Main.UNIQUE_USER_ID).length(), IPAddress, port);
+                    DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID+sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID+sendData).length(), IPAddress, port);
                     if (clientSocket == null || clientSocket.isClosed()) {
                         clientSocket = new DatagramSocket();
                     }
@@ -137,6 +137,7 @@ public class SwitchFrame extends JFrame {
                     if (clientSocket == null || clientSocket.isClosed()) {
                         clientSocket = new DatagramSocket();
                     }
+                    clientSocket.setSoTimeout(3000);
                     clientSocket.receive(receivePacket);
                     String sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
                     System.out.println(sentence);
@@ -152,6 +153,7 @@ public class SwitchFrame extends JFrame {
     }
 
     private void processString(String input) {
+        System.out.println("input : "+input);
         if (input.contains("@@@")) {
 
             String[] pinax = input.split("@@@");
