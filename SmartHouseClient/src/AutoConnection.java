@@ -97,6 +97,7 @@ public class AutoConnection {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
+                    clientSocket.setSoTimeout(3000);
                     clientSocket.receive(receivePacket);
                     String modifiedSentence = new String(receivePacket.getData()); // 1rst connection respond
                     if (!usingInetAddress.contains(receivePacket.getAddress())) {
@@ -115,7 +116,7 @@ public class AutoConnection {
                         closeClientSoccet();
                     }
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
