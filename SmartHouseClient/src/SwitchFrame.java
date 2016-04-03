@@ -46,6 +46,7 @@ public class SwitchFrame extends JFrame {
 
     public SwitchFrame(MenuFrame menuFrame) {
         this.menuFrame = menuFrame;
+        receiver();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JButton back = new JButton("Back");
         JButton refresh = new JButton("Refresh");
@@ -82,6 +83,7 @@ public class SwitchFrame extends JFrame {
                 menuFrame.setVisible(true);
                 menuFrame.repaint();
                 menuFrame.revalidate();
+                isRunning=false;
                 if (clientSocket != null) {
                     try {
                         clientSocket.disconnect();
@@ -108,7 +110,7 @@ public class SwitchFrame extends JFrame {
     }
 
     private void sendData(final String sendData, final InetAddress IPAddress, final int port) {
-        receiver();
+       // receiver();
         new Thread() {
             @Override
             public void run() {
@@ -137,7 +139,7 @@ public class SwitchFrame extends JFrame {
             }
         }
     }
-
+private boolean isRunning=true;
     private void receiver() {
         new Thread() {
             @Override
@@ -146,11 +148,11 @@ public class SwitchFrame extends JFrame {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
-                    while(true){
+                    while(isRunning){
                     if (clientSocket == null) {
                         clientSocket = new DatagramSocket();
                     }
-                    clientSocket.setSoTimeout(3000);
+                   // clientSocket.setSoTimeout(3000);
                     clientSocket.receive(receivePacket);
                     String sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
                     System.out.println(sentence);
