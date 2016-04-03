@@ -111,7 +111,7 @@ public class SwitchFrame extends JFrame {
                 try {
 
                     DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID + sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID + sendData).length(), IPAddress, port);
-                    if (clientSocket == null || clientSocket.isClosed()) {
+                    if (clientSocket == null || !clientSocket.isConnected()) {
                         clientSocket = new DatagramSocket();
                     }
 
@@ -142,7 +142,7 @@ public class SwitchFrame extends JFrame {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
-                    if (clientSocket == null || clientSocket.isClosed()) {
+                    if (clientSocket == null || !clientSocket.isConnected()) {
                         clientSocket = new DatagramSocket();
                     }
                     clientSocket.setSoTimeout(3000);
