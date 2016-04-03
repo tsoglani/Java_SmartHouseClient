@@ -80,6 +80,8 @@ public class SwitchFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 setVisible(false);
                 menuFrame.setVisible(true);
+                menuFrame.repaint();
+                menuFrame.revalidate();
                 if (clientSocket != null) {
                     try {
                         clientSocket.disconnect();
