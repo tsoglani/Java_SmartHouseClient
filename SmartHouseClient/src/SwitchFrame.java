@@ -87,7 +87,9 @@ public class SwitchFrame extends JFrame {
                     } catch (Exception ee) {
                         ee.printStackTrace();
                     }
+                    
                 }
+                clientSocket=null;
             }
         });
 
@@ -109,9 +111,9 @@ public class SwitchFrame extends JFrame {
             @Override
             public void run() {
                 try {
-
+                    System.out.println("send data : "+sendData);
                     DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID + sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID + sendData).length(), IPAddress, port);
-                    if (clientSocket == null || !clientSocket.isConnected()) {
+                    if (clientSocket == null ) {
                         clientSocket = new DatagramSocket();
                     }
 
@@ -142,7 +144,8 @@ public class SwitchFrame extends JFrame {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
-                    if (clientSocket == null || !clientSocket.isConnected()) {
+                    while(true){
+                    if (clientSocket == null) {
                         clientSocket = new DatagramSocket();
                     }
                     clientSocket.setSoTimeout(3000);
@@ -150,8 +153,9 @@ public class SwitchFrame extends JFrame {
                     String sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
                     System.out.println(sentence);
                     processString(sentence);
-                } catch (SocketException e) {
-
+                    }
+                } catch (java.net.SocketTimeoutException e) {
+                    System.out.println("close receiver thread");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

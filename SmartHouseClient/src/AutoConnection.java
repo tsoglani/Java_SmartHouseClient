@@ -97,25 +97,28 @@ public class AutoConnection {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
-                    clientSocket.setSoTimeout(3000);
+                    while(true){
+                    clientSocket.setSoTimeout(4000);
                     clientSocket.receive(receivePacket);
                     String modifiedSentence = new String(receivePacket.getData()); // 1rst connection respond
+                    System.out.println(modifiedSentence);
                     if (!usingInetAddress.contains(receivePacket.getAddress())) {
                         usingInetAddress.add(receivePacket.getAddress());
                     }
                     ///
                     if (input.equals(MenuFrame.voiceButtonText)) {
-
+ closeClientSoccet();
                         VoiceCommandFrame voiceCommandFrame = new VoiceCommandFrame(menuFrame);
                         menuFrame.setVisible(false);
-                        closeClientSoccet();
+                       
 
                     } else if (input.equals(MenuFrame.switchButtonText)) {
+                         closeClientSoccet();
                         SwitchFrame switchFrame = new SwitchFrame(menuFrame);
                         menuFrame.setVisible(false);
-                        closeClientSoccet();
+                       
                     }
-
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
