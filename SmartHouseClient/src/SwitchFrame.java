@@ -68,9 +68,12 @@ public class SwitchFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (modeToggle.getText().equals(commandsMode)) {
                     modeToggle.setText(outputsMode);
+                    isOnCommandMode=false;
                 } else if (modeToggle.getText().equals(outputsMode)) {
                     modeToggle.setText(commandsMode);
+                isOnCommandMode=true;
                 }
+                
                 usingMode = modeToggle.getText();
                 sendForReceiving();
             }
@@ -83,7 +86,7 @@ public class SwitchFrame extends JFrame {
                 menuFrame.setVisible(true);
                 menuFrame.repaint();
                 menuFrame.revalidate();
-                isRunning=false;
+                isRunning = false;
                 if (clientSocket != null) {
                     try {
                         clientSocket.disconnect();
@@ -91,9 +94,9 @@ public class SwitchFrame extends JFrame {
                     } catch (Exception ee) {
                         ee.printStackTrace();
                     }
-                    
+
                 }
-                clientSocket=null;
+                clientSocket = null;
             }
         });
 
@@ -110,14 +113,14 @@ public class SwitchFrame extends JFrame {
     }
 
     private void sendData(final String sendData, final InetAddress IPAddress, final int port) {
-       // receiver();
+        // receiver();
         new Thread() {
             @Override
             public void run() {
                 try {
-                    System.out.println("send data : "+sendData);
+                    System.out.println("send data : " + sendData);
                     DatagramPacket sendPacket = new DatagramPacket((Main.UNIQUE_USER_ID + sendData).getBytes("UTF-8"), (Main.UNIQUE_USER_ID + sendData).length(), IPAddress, port);
-                    if (clientSocket == null ) {
+                    if (clientSocket == null) {
                         clientSocket = new DatagramSocket();
                     }
 
@@ -139,7 +142,8 @@ public class SwitchFrame extends JFrame {
             }
         }
     }
-private boolean isRunning=true;
+    private boolean isRunning = true;
+
     private void receiver() {
         new Thread() {
             @Override
@@ -148,15 +152,15 @@ private boolean isRunning=true;
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 try {
-                    while(isRunning){
-                    if (clientSocket == null) {
-                        clientSocket = new DatagramSocket();
-                    }
-                   // clientSocket.setSoTimeout(3000);
-                    clientSocket.receive(receivePacket);
-                    String sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
-                    System.out.println(sentence);
-                    processString(sentence);
+                    while (isRunning) {
+                        if (clientSocket == null) {
+                            clientSocket = new DatagramSocket();
+                        }
+                        // clientSocket.setSoTimeout(3000);
+                        clientSocket.receive(receivePacket);
+                        String sentence = new String(receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
+                        System.out.println(sentence);
+                        processString(sentence);
                     }
                 } catch (java.net.SocketTimeoutException e) {
                     System.out.println("close receiver thread");
@@ -187,9 +191,19 @@ private boolean isRunning=true;
                 }
 
                 if (fullMsg.startsWith("respondGetAllCommandsOutput")) {
-                    fullMsg = fullMsg.substring("respondGetAllCommandsOutput".length(), fullMsg.length());
+                    if (isOnCommandMode) {
+                        centerPanel.removeAll();
+                        fullMsg = fullMsg.substring("respondGetAllCommandsOutput".length(), fullMsg.length());
+                    } else {
+                        return;
+                    }
                 } else if (fullMsg.startsWith("respondGetAllOutput")) {
-                    fullMsg = fullMsg.substring("respondGetAllOutput".length(), fullMsg.length());
+                    if (!isOnCommandMode) {
+                        centerPanel.removeAll();
+                        fullMsg = fullMsg.substring("respondGetAllOutput".length(), fullMsg.length());
+                    } else {
+                        return;
+                    }
                 }
                 if (fullMsg.endsWith("on")) {
                     text = fullMsg.substring(0, fullMsg.length() - " on".length());
